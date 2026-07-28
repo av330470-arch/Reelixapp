@@ -19,7 +19,7 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Set up flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.x'
@@ -31,8 +31,12 @@ jobs:
       - name: Re-generate Android Files
         run: flutter create --platforms=android --project-name=reelixapp .
 
+      - name: Set minSdkVersion to 21
+        run: |
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
+
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
