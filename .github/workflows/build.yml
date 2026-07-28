@@ -1,4 +1,4 @@
-name: Build android APK
+name: Build Android APK
 
 on:
   push:
@@ -16,13 +16,12 @@ jobs:
       - name: Set up Java Development Kit
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.x'
           channel: 'stable'
 
       - name: Get dependencies
@@ -31,9 +30,16 @@ jobs:
       - name: Re-generate Android Files
         run: flutter create --platforms=android --project-name=reelixapp .
 
-      - name: Set minSdkVersion to 21
+      - name: Fix Android Build Settings & Kotlin Version
         run: |
+          # Set minSdkVersion and compileSdkVersion
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
+          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle || true
+          sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle || true
+          
+          # Force Kotlin 1.9.20 in both settings.gradle and build.gradle
+          sed -i 's/id "org.jetbrains.kotlin.android" version ".*"/id "org.jetbrains.kotlin.android" version "1.9.20"/g' android/settings.gradle || true
+          sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.9.20"/g' android/build.gradle || true
 
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
@@ -43,4 +49,3 @@ jobs:
         with:
           name: reelix-app-release
           path: build/app/outputs/flutter-apk/app-release.apk
-          
