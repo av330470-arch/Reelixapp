@@ -1,4 +1,4 @@
-name: Build Android APK
+Name: Build Android APK
 
 on:
   push:
@@ -28,6 +28,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Re-generate Android Files
+        run: flutter create --platforms=android .
+
       - name: Build APK
         run: flutter build apk --release
 
@@ -36,4 +39,3 @@ jobs:
         with:
           name: reelix-app-release
           path: build/app/outputs/flutter-apk/app-release.apk
-          
