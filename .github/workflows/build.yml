@@ -30,40 +30,12 @@ jobs:
 
       - name: Ensure Android & Flutter Project Structure
         run: |
-          mkdir -p /tmp/backup_lib
-          if [ -d "lib" ]; then cp -r lib/* /tmp/backup_lib/ 2>/dev/null || true; fi
-          rm -f pubspec.yaml
+          mkdir -p /tmp/backup
+          if [ -f "pubspec.yaml" ]; then cp pubspec.yaml /tmp/backup/pubspec.yaml; fi
+          if [ -d "lib" ]; then cp -r lib /tmp/backup/; fi
           flutter create . --project-name instagram_reels_clone --platforms=android --org com.example.instagram_reels --overwrite
-          if [ -d "/tmp/backup_lib" ]; then cp -r /tmp/backup_lib/* lib/ 2>/dev/null || true; fi
-
-      - name: Write Clean pubspec.yaml
-        run: |
-          cat << 'EOF' > pubspec.yaml
-name: instagram_reels_clone
-description: "Instagram Reels clone app"
-publish_to: 'none'
-version: 1.1.0+2
-
-environment:
-  sdk: '>=3.0.0 <4.0.0'
-
-dependencies:
-  flutter:
-    sdk: flutter
-  supabase_flutter: ^2.3.4
-  video_player: ^2.8.2
-  google_mobile_ads: ^5.0.0
-  image_picker: ^1.0.7
-  cupertino_icons: ^1.0.6
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.0
-
-flutter:
-  uses-material-design: true
-EOF
+          if [ -f "/tmp/backup/pubspec.yaml" ]; then cp /tmp/backup/pubspec.yaml pubspec.yaml; fi
+          if [ -d "/tmp/backup/lib" ]; then cp -r /tmp/backup/lib/* lib/ 2>/dev/null || true; fi
 
       - name: Get Flutter Dependencies
         run: flutter pub get
