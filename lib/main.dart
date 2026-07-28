@@ -328,7 +328,7 @@ class _ReelsFeedScreenState extends State<ReelsFeedScreen> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.analytics_outlined, color: Colors.emeraldAccent),
+                      icon: const Icon(Icons.analytics_outlined, color: Colors.tealAccent),
                       onPressed: widget.onOpenDashboard,
                     ),
                     IconButton(
@@ -429,7 +429,7 @@ class _ReelVideoCardState extends State<ReelVideoCard> with SingleTickerProvider
     return GestureDetector(
       onTapDown: _handleDoubleTap,
       child: Stack(
-        fit: StackPane.expand,
+        fit: StackFit.expand,
         children: [
           // Video Layer
           _isInitialized
@@ -441,7 +441,7 @@ class _ReelVideoCardState extends State<ReelVideoCard> with SingleTickerProvider
                     child: VideoPlayer(_videoController),
                   ),
                 )
-              : const Center(child: CircularProgressIndicator(color: Colors.roseAccent)),
+              : const Center(child: CircularProgressIndicator(color: Colors.pinkAccent)),
 
           // Gradient Overlay
           Container(
@@ -460,7 +460,7 @@ class _ReelVideoCardState extends State<ReelVideoCard> with SingleTickerProvider
             Positioned(
               left: _heartAnimPos.dx - 40,
               top: _heartAnimPos.dy - 40,
-              child: const Icon(Icons.favorite, size: 80, color: Colors.rose),
+              child: const Icon(Icons.favorite, size: 80, color: Colors.pink),
             ),
 
           // Bottom Left Overlay UI
@@ -530,7 +530,7 @@ class _ReelVideoCardState extends State<ReelVideoCard> with SingleTickerProvider
                 IconButton(
                   icon: Icon(
                     widget.reel.isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: widget.reel.isLiked ? Colors.rose : Colors.white,
+                    color: widget.reel.isLiked ? Colors.pink : Colors.white,
                     size: 30,
                   ),
                   onPressed: () {
@@ -745,9 +745,9 @@ class CreatorDashboardSheet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.emerald[900]!.withOpacity(0.3),
+              color: Colors.teal[900]!.withOpacity(0.3),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.emeraldAccent.withOpacity(0.4)),
+              border: Border.all(color: Colors.tealAccent.withOpacity(0.4)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -756,7 +756,7 @@ class CreatorDashboardSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Total Balance', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                    Text('\${earnings.toStringAsFixed(2)}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.emeraldAccent)),
+                    Text('\${earnings.toStringAsFixed(2)}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.tealAccent)),
                   ],
                 ),
                 ElevatedButton(
@@ -766,7 +766,7 @@ class CreatorDashboardSheet extends StatelessWidget {
                       const SnackBar(content: Text('Payout request submitted to Bank/UPI')),
                     );
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.emeraldAccent),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.tealAccent),
                   child: const Text('Withdraw', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                 ),
               ],
@@ -860,7 +860,7 @@ class ReportSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Report / DMCA Claim', style: TextStyle(color: Colors.rose, fontWeight: FontWeight.bold)),
+          const Text('Report / DMCA Claim', style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           ListTile(
             title: const Text('Copyright Infringement'),
@@ -925,7 +925,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 12),
             const Text('Alex Adventures', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 4),
-            Text('Creator Earnings: \${creatorEarnings.toStringAsFixed(2)}', style: const TextStyle(color: Colors.emeraldAccent, fontWeight: FontWeight.bold)),
+            Text('Creator Earnings: \${creatorEarnings.toStringAsFixed(2)}', style: const TextStyle(color: Colors.tealAccent, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
