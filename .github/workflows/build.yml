@@ -22,6 +22,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.19.6'
           channel: 'stable'
 
       - name: Get dependencies
@@ -30,16 +31,19 @@ jobs:
       - name: Re-generate Android Files
         run: flutter create --platforms=android --project-name=reelixapp .
 
-      - name: Fix Android Build Settings & Kotlin Version
+      - name: Fix Compatibility & Gradle Settings
         run: |
-          # Set minSdkVersion and compileSdkVersion
+          # Downgrade Gradle Wrapper to 7.6.3 to support google_mobile_ads syntax
+          sed -i 's/gradle-.*-bin.zip/gradle-7.6.3-bin.zip/g' android/gradle/wrapper/gradle-wrapper.properties || true
+          
+          # Set AGP version to 7.4.2 in settings.gradle or build.gradle
+          sed -i 's/com.android.application" version ".*"/com.android.application" version "7.4.2"/g' android/settings.gradle || true
+          sed -i 's/id "org.jetbrains.kotlin.android" version ".*"/id "org.jetbrains.kotlin.android" version "1.8.20"/g' android/settings.gradle || true
+
+          # Set Android SDK versions
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
           sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle || true
           sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle || true
-          
-          # Force Kotlin 1.9.20 in both settings.gradle and build.gradle
-          sed -i 's/id "org.jetbrains.kotlin.android" version ".*"/id "org.jetbrains.kotlin.android" version "1.9.20"/g' android/settings.gradle || true
-          sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.9.20"/g' android/build.gradle || true
 
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
@@ -49,3 +53,4 @@ jobs:
         with:
           name: reelix-app-release
           path: build/app/outputs/flutter-apk/app-release.apk
+          
