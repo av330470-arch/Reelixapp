@@ -1,4 +1,4 @@
-Name: Build Android APK
+name: Build Android APK
 
 on:
   push:
@@ -39,3 +39,4 @@ jobs:
         with:
           name: reelix-app-release
           path: build/app/outputs/flutter-apk/app-release.apk
+          
