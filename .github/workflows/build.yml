@@ -31,16 +31,37 @@ jobs:
       - name: Re-generate Android Files
         run: flutter create --platforms=android --project-name=reelixapp .
 
-      - name: Inject AdMob App ID & Permissions into AndroidManifest.xml
+      - name: Safely Inject Permissions & AdMob ID into AndroidManifest.xml
         run: |
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-          
-          # Add Internet Permission if missing
-          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET"/>' $MANIFEST
-          sed -i '/<application/i \    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>' $MANIFEST
-          
-          # Inject Sample AdMob App ID inside <application> tag
-          sed -i '/<application/a \        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-3940256099942544~3347511713"/>' $MANIFEST
+          python3 -c '
+          import xml.etree.ElementTree as ET
+
+          manifest_path = "android/app/src/main/AndroidManifest.xml"
+          ET.register_namespace("android", "http://schemas.android.com/apk/res/android")
+          tree = ET.parse(manifest_path)
+          root = tree.getroot()
+
+          # Permissions
+          permissions = [
+              "android.permission.INTERNET",
+              "android.permission.ACCESS_NETWORK_STATE"
+          ]
+          for perm in permissions:
+              if not root.find(f"./uses-permission[@android:name=\"{perm}\"]", {"android": "http://schemas.android.com/apk/res/android"}):
+                  elem = ET.Element("uses-permission", {"{http://schemas.android.com/apk/res/android}name": perm})
+                  root.insert(0, elem)
+
+          # Application Tag Meta Data
+          app = root.find("application")
+          if app is not None:
+              meta = ET.Element("meta-data", {
+                  "{http://schemas.android.com/apk/res/android}name": "com.google.android.gms.ads.APPLICATION_ID",
+                  "{http://schemas.android.com/apk/res/android}value": "ca-app-pub-3940256099942544~3347511713"
+              })
+              app.append(meta)
+
+          tree.write(manifest_path, encoding="utf-8", xml_declaration=True)
+          '
 
       - name: Fix Compatibility & Gradle Settings
         run: |
