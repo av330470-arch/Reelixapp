@@ -31,16 +31,22 @@ jobs:
       - name: Re-generate Android Files
         run: flutter create --platforms=android --project-name=reelixapp .
 
+      - name: Inject AdMob App ID & Permissions into AndroidManifest.xml
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          
+          # Add Internet Permission if missing
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET"/>' $MANIFEST
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>' $MANIFEST
+          
+          # Inject Sample AdMob App ID inside <application> tag
+          sed -i '/<application/a \        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-3940256099942544~3347511713"/>' $MANIFEST
+
       - name: Fix Compatibility & Gradle Settings
         run: |
-          # Downgrade Gradle Wrapper to 7.6.3 to support google_mobile_ads syntax
           sed -i 's/gradle-.*-bin.zip/gradle-7.6.3-bin.zip/g' android/gradle/wrapper/gradle-wrapper.properties || true
-          
-          # Set AGP version to 7.4.2 in settings.gradle or build.gradle
           sed -i 's/com.android.application" version ".*"/com.android.application" version "7.4.2"/g' android/settings.gradle || true
           sed -i 's/id "org.jetbrains.kotlin.android" version ".*"/id "org.jetbrains.kotlin.android" version "1.8.20"/g' android/settings.gradle || true
-
-          # Set Android SDK versions
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle || true
           sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle || true
           sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle || true
@@ -53,4 +59,3 @@ jobs:
         with:
           name: reelix-app-release
           path: build/app/outputs/flutter-apk/app-release.apk
-          
