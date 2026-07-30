@@ -1,50 +1,36 @@
-name: Build Flutter APK
+name: Build Android APK
 
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
-      - name: Set up Java Development Kit (JDK 17)
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '17'
 
-      - name: Set up Flutter SDK
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.x'
-          channel: 'stable'
-          cache: true
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.x'
 
-      - name: Ensure Android & Flutter Project Structure
-        run: |
-          mkdir -p /tmp/backup
-          if [ -f "pubspec.yaml" ]; then cp pubspec.yaml /tmp/backup/pubspec.yaml; fi
-          if [ -d "lib" ]; then cp -r lib /tmp/backup/; fi
-          flutter create . --project-name instagram_reels_clone --platforms=android --org com.example.instagram_reels --overwrite
-          if [ -f "/tmp/backup/pubspec.yaml" ]; then cp /tmp/backup/pubspec.yaml pubspec.yaml; fi
-          if [ -d "/tmp/backup/lib" ]; then cp -r /tmp/backup/lib/* lib/ 2>/dev/null || true; fi
+    - name: Install Dependencies
+      run: flutter pub get
 
-      - name: Get Flutter Dependencies
-        run: flutter pub get
+    - name: Build APK
+      run: flutter build apk --release --no-tree-shake-icons
 
-      - name: Build Android APK (Release)
-        run: flutter build apk --release --no-tree-shake-icons
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Flutter-Reels-Release-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: reelix-app-release
+        path: build/app/outputs/flutter-apk/app-release.apk
+        
