@@ -22,15 +22,16 @@ jobs:
       with:
         channel: 'stable'
 
-    - name: Create Missing Folders & Build APK
+    - name: Prepare Project Structure
       run: |
+        flutter create --org com.example --project-name instagram_reels_clone .
         flutter pub get
-        flutter create . --org com.example --project-name instagram_reels_clone --force
-        flutter build apk --release --no-tree-shake-icons
+
+    - name: Build APK
+      run: flutter build apk --release --no-tree-shake-icons
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: reelix-app-release
         path: build/app/outputs/flutter-apk/app-release.apk
-        
