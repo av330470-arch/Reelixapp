@@ -20,18 +20,17 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.x'
+        channel: 'stable'
 
-    - name: Install Dependencies
-      run: flutter pub get
-
-    - name: Build APK
-      run: flutter build apk --release --no-tree-shake-icons
+    - name: Create Missing Folders & Build APK
+      run: |
+        flutter pub get
+        flutter create . --org com.example --project-name instagram_reels_clone --force
+        flutter build apk --release --no-tree-shake-icons
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: reelix-app-release
         path: build/app/outputs/flutter-apk/app-release.apk
-        
         
