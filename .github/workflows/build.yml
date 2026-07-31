@@ -20,11 +20,14 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.6'
+        channel: 'stable'
 
-    - name: Prepare Project & Install Dependencies
+    - name: Prepare Project & Fix minSdkVersion
       run: |
         flutter create --org com.example --project-name instagram_reels_clone .
+        # Auto-fix minSdkVersion for AdMob (Set 21)
+        sed -i 's/minSdkVersion .*/minSdkVersion 21/' android/app/build.gradle || true
+        sed -i 's/flutter.minSdkVersion/21/' android/app/build.gradle || true
         flutter pub get
 
     - name: Build APK
@@ -35,3 +38,4 @@ jobs:
       with:
         name: reelix-app-release
         path: build/app/outputs/flutter-apk/app-release.apk
+        
